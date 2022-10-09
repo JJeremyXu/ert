@@ -3,9 +3,13 @@ import './security-restrictions';
 import {restoreOrCreateWindow} from '/@/mainWindow';
 
 ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+  if(arg == '123'){
+    const msgTemplate = (pingPong: string) => `IPC test: reply to ${pingPong}`;
+    console.log(msgTemplate(arg));
+    event.reply('ipc-example', msgTemplate(arg));
+  }else{
+    return;
+  }
 });
 
 /**
