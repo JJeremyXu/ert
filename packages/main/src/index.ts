@@ -1,12 +1,27 @@
 import {app, ipcMain} from 'electron';
+import {OroDevice, Events} from '@orosound/node-sdk';
 import './security-restrictions';
 import {restoreOrCreateWindow} from '/@/mainWindow';
+const device = new OroDevice();
+let api_version : number;
+device.on(Events.DEVICE_READY, () =>{
+
+  api_version = device.api_version;
+},
+);
+
+device.attach().then(() => {
+  device.init();
+},
+).catch((err) => {
+  console.log(err);
+});
 
 ipcMain.on('ipc-example', async (event, arg) => {
-  if(arg == '123'){
-    const msgTemplate = (pingPong: string) => `IPC test: reply to ${pingPong}`;
+  if(arg == 'api-version'){
+    const msgTemplate = (msg: number) => `api-version: ${msg}`;
     // console.log(msgTemplate(arg));
-    event.reply('ipc-example', msgTemplate(arg));
+    event.reply('ipc-example', msgTemplate(api_version));
   }else{
     return;
   }

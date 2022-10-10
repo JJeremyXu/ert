@@ -17,7 +17,7 @@ const Styles = styled.div`
     right: 0;
     height: 100vh;
     background-color: black;
-    text-align: center;
+    // text-align: center;
   }
   .table {
     border-spacing: 0;
@@ -92,7 +92,7 @@ const App = () => {
     };
   };
 
-  const submit = (e: { preventDefault: () => void; }) => {
+  const submit = (e: {preventDefault: () => void}) => {
     e.preventDefault();
     if (message.length === 0) {
       return;
@@ -100,41 +100,45 @@ const App = () => {
     const msg = makeCmd(message);
     setMessage('');
     allMessages.push(msg);
-    setMessages(allMessages => [...allMessages, msg]);
-    window.electron.ipcRenderer.sendMessage('ipc-example',[message]);
+    //    setMessages(allMessages => [...allMessages, msg]);
+    setMessages([...messages, msg]);
+    window.electron.ipcRenderer.sendMessage('ipc-example', [message]);
   };
 
   const columns = [
-      {
-        Header: 'Time',
-        accessor: 'time',
-      },
-      {
-        Header: 'Mod',
-        accessor: 'mod',
-      },
-      {
-        Header: 'Ct',
-        accessor: 'ct',
-      },
-      {
-        Header: 'Terminal Data',
-        accessor: 'terminal',
-      },
-    ];
+    {
+      Header: 'Time',
+      accessor: 'time',
+    },
+    {
+      Header: 'Mod',
+      accessor: 'mod',
+    },
+    {
+      Header: 'Ct',
+      accessor: 'ct',
+    },
+    {
+      Header: 'Terminal Data',
+      accessor: 'terminal',
+    },
+  ];
 
-    useEffect(() => {
-      window.electron.ipcRenderer.on('ipc-example',(args)=>{
-        const reply_msg = makeReplyMsg(args as string);
-        allMessages.push(reply_msg);
-        setMessages(allMessages=>[...allMessages, reply_msg]);
-      });
-    }, []);
-
+  useEffect(() => {
+    window.electron.ipcRenderer.on('ipc-example', args => {
+      const reply_msg = makeReplyMsg(args as string);
+      allMessages.push(reply_msg);
+      setMessages(allMessages => [...allMessages, reply_msg]);
+    });
+  }, []);
 
   useEffect(() => {
     setMessage('');
   }, [messages]);
+
+  useEffect(() => {
+    setMessages([]);
+  }, [message === 'clear']);
 
   return (
     <Styles>
