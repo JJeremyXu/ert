@@ -7,9 +7,9 @@ const root = createRoot(container!); // createRoot(container!) if you use TypeSc
 root.render(<App />);
 
 // window.electron.ipcRenderer.sendMessage('ipc-example', ['ping']);
-window.electron.ipcRenderer.once('ipc-example',(arg)=>{
-  console.log(arg);
-});
+// window.electron.ipcRenderer.on('ipc-example',(arg)=>{
+//   console.log(arg);
+// });
 // ReactDOM.render(
 //   <React.StrictMode>
 //     {/* <App message={arg as string}/> */}

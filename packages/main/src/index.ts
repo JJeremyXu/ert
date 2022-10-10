@@ -5,7 +5,7 @@ import {restoreOrCreateWindow} from '/@/mainWindow';
 ipcMain.on('ipc-example', async (event, arg) => {
   if(arg == '123'){
     const msgTemplate = (pingPong: string) => `IPC test: reply to ${pingPong}`;
-    console.log(msgTemplate(arg));
+    // console.log(msgTemplate(arg));
     event.reply('ipc-example', msgTemplate(arg));
   }else{
     return;

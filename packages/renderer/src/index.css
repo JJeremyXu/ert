@@ -5,11 +5,6 @@ input{
   outline: none;
   border: none;
 }
-
-.App {
-  left: 0;
-  right: 0;
-}
 .chat-window {
   /* padding: 16px; */
   /* max-width: 960px; */
@@ -17,7 +12,7 @@ input{
   height: 100vh;
   left: 0;
   right: 0;
-  background-color: black;
+  /* background-color: black; */
 }
 .chat-form {
   background-color: #fff;
@@ -29,15 +24,6 @@ input{
 button {
   border: 0;
 }
-.messages {
-  height: 95vh;
-  list-style-type: none;
-  padding: 0 0 0 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  overflow-y: scroll;
-}
 .messages li {
   /* margin-top: 200px; */
   display: flex;
@@ -46,18 +32,6 @@ button {
   align-items: flex-end;
   justify-content: flex-end;
 } */
-.messages li.my-message span {
-  /* background-color: #6d8fe8; */
-}
-.messages li span {
-  /* background-color: #808080; */
-  /* border-radius: 28px; */
-  color: #fff;
-  display: inline-block;
-  font-size: 20px;
-  padding: 8px 15px;
-  max-width: 80%;
-}
 .chat-input {
   display: block;
   background-color: black;
