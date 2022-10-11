@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {Table} from './components/Table';
 import './index.css';
 const Styles = styled.div`
+
   ${
     '' /* These styles are suggested for the table fill all available space in its containing element */
   }
@@ -17,7 +18,7 @@ const Styles = styled.div`
     right: 0;
     height: 100vh;
     background-color: black;
-    // text-align: center;
+    text-align: center;
   }
   .table {
     border-spacing: 0;
@@ -45,14 +46,14 @@ const Styles = styled.div`
           border-bottom: 0;
         }
       }
-      /* border-bottom: 1px solid black; */
+       border-bottom: 1px solid black;
     }
 
     .th,
     .td {
       margin: 0;
       padding: 0.5rem;
-      /* border-right: 1px solid black; */
+       border-right: 1px solid black;
       :last-child {
         border-right: 0;
       }
@@ -97,12 +98,16 @@ const App = () => {
     if (message.length === 0) {
       return;
     }
-    const msg = makeCmd(message);
-    setMessage('');
-    allMessages.push(msg);
-    //    setMessages(allMessages => [...allMessages, msg]);
-    setMessages([...messages, msg]);
-    window.electron.ipcRenderer.sendMessage('ipc-example', [message]);
+    if(message == 'clear'){
+        setMessages([]);
+    }else{
+      const msg = makeCmd(message);
+      setMessage('');
+      allMessages.push(msg);
+      setMessages(allMessages => [...allMessages, msg]);
+      // setMessages([...messages, msg]);
+      window.electron.ipcRenderer.sendMessage('ipc-example', [message]);
+    }
   };
 
   const columns = [
@@ -136,9 +141,9 @@ const App = () => {
     setMessage('');
   }, [messages]);
 
-  useEffect(() => {
-    setMessages([]);
-  }, [message === 'clear']);
+  // useEffect(() => {
+  //   setMessages([]);
+  // }, [message === 'clear']);
 
   return (
     <Styles>

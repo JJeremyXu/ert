@@ -1,8 +1,39 @@
-import {app, ipcMain} from 'electron';
-import {OroDevice, Events} from '@orosound/node-sdk';
+import { app, ipcMain } from 'electron';
+import { OroDevice, Events } from '@orosound/node-sdk';
 import './security-restrictions';
-import {restoreOrCreateWindow} from '/@/mainWindow';
+import { restoreOrCreateWindow } from '/@/mainWindow';
+
+import * as usbDetect from 'usb-detection';
+
+usbDetect.startMonitoring();
 const device = new OroDevice();
+
+usbDetect.on('add:1155', async function (dev) {
+  console.log('add', dev);
+  setTimeout(() => {
+    attachDevice(device);
+  }, 500);
+});
+attachDevice(device);
+
+function attachDevice(device: OroDevice) {
+  device.on(Events.DEVICE_READY, () => {
+
+    console.log('api-version', device.api_version);
+    device.getHook();
+  },
+
+  );
+  device
+    .attach()
+    .then(() => {
+      device.init();
+    })
+    .catch(() => {
+      console.log('please connect your device');
+    });
+}
+
 let api_version : number;
 device.on(Events.DEVICE_READY, () =>{
 
@@ -13,8 +44,8 @@ device.on(Events.DEVICE_READY, () =>{
 device.attach().then(() => {
   device.init();
 },
-).catch((err) => {
-  console.log(err);
+).catch((_) => {
+  console.log('please connect your device');
 });
 
 ipcMain.on('ipc-example', async (event, arg) => {

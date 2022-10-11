@@ -37,6 +37,7 @@
     "cross-env": "7.0.3",
     "electron": "20.2.0",
     "electron-builder": "23.3.3",
+    "electron-rebuild": "^3.2.9",
     "eslint": "8.24.0",
     "eslint-plugin-vue": "9.5.1",
     "happy-dom": "6.0.4",
@@ -61,6 +62,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-table": "^7.8.0",
-    "styled-components": "^5.3.6"
+    "styled-components": "^5.3.6",
+    "usb-detection": "^4.14.1"
   }
 }
