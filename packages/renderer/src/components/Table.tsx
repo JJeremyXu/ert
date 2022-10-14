@@ -1,6 +1,6 @@
-import {useTable, useFlexLayout} from 'react-table';
-
-import {useMemo} from 'react';
+import {useTable, useFlexLayout, useResizeColumns} from 'react-table';
+import styled from 'styled-components';
+import {useMemo, useRef, useEffect} from 'react';
 
 type cmdMessage = {
   time: string;
@@ -26,15 +26,26 @@ export const Table = ({columns, data}:inputTable) => {
     [],
   );
 
+  const displayEndRef = useRef(null) as unknown as React.MutableRefObject<HTMLInputElement>;
+
+  const scrollToBottom = () => {
+    console.log(displayEndRef.current);
+    displayEndRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(scrollToBottom, [data]);
+
+
   // Use the state and functions returned from useTable to build your UI
 
-  const {getTableProps, headerGroups, rows, prepareRow} = useTable(
+  const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} = useTable(
     {
       columns,
       data,
       defaultColumn,
     },
     useFlexLayout,
+    useResizeColumns
   );
 
   // Render the UI for your table
@@ -62,7 +73,7 @@ export const Table = ({columns, data}:inputTable) => {
           </div>
         ))}
       </div>
-      <div className="tbody">
+      <div {...getTableBodyProps()}className="tbody">
         {rows.map(row => {
           prepareRow(row);
           return (
@@ -83,6 +94,7 @@ export const Table = ({columns, data}:inputTable) => {
             </div>
           );
         })}
+        <div ref = {displayEndRef}/>
       </div>
     </div>
   );

@@ -2,28 +2,18 @@ import { app, ipcMain } from 'electron';
 import { OroDevice, Events } from '@orosound/node-sdk';
 import './security-restrictions';
 import { restoreOrCreateWindow } from '/@/mainWindow';
-
-import * as usbDetect from 'usb-detection';
-
-usbDetect.startMonitoring();
 const device = new OroDevice();
+let api_version : number;
+device.on(Events.DEVICE_READY, () => {
+  api_version = device.api_version;
+  console.log('api-version', device.api_version);
+},
+);
 
-usbDetect.on('add:1155', async function (dev) {
-  console.log('add', dev);
-  setTimeout(() => {
-    attachDevice(device);
-  }, 500);
-});
 attachDevice(device);
 
+
 function attachDevice(device: OroDevice) {
-  device.on(Events.DEVICE_READY, () => {
-
-    console.log('api-version', device.api_version);
-    device.getHook();
-  },
-
-  );
   device
     .attach()
     .then(() => {
@@ -34,25 +24,11 @@ function attachDevice(device: OroDevice) {
     });
 }
 
-let api_version : number;
-device.on(Events.DEVICE_READY, () =>{
-
-  api_version = device.api_version;
-},
-);
-
-device.attach().then(() => {
-  device.init();
-},
-).catch((_) => {
-  console.log('please connect your device');
-});
-
-ipcMain.on('ipc-example', async (event, arg) => {
+ipcMain.on('ipc-cmd', async (event, arg) => {
   if(arg == 'api-version'){
     const msgTemplate = (msg: number) => `api-version: ${msg}`;
     // console.log(msgTemplate(arg));
-    event.reply('ipc-example', msgTemplate(api_version));
+    event.reply('ipc-cmd', msgTemplate(api_version));
   }else{
     return;
   }

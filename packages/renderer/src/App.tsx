@@ -1,6 +1,7 @@
 import {useState, useEffect, useRef} from 'react';
 import styled from 'styled-components';
 import {Table} from './components/Table';
+
 import './index.css';
 const Styles = styled.div`
 
@@ -18,7 +19,6 @@ const Styles = styled.div`
     right: 0;
     height: 100vh;
     background-color: black;
-    text-align: center;
   }
   .table {
     border-spacing: 0;
@@ -106,7 +106,7 @@ const App = () => {
       allMessages.push(msg);
       setMessages(allMessages => [...allMessages, msg]);
       // setMessages([...messages, msg]);
-      window.electron.ipcRenderer.sendMessage('ipc-example', [message]);
+      window.electron.ipcRenderer.sendMessage('ipc-cmd', [message]);
     }
   };
 
@@ -114,14 +114,17 @@ const App = () => {
     {
       Header: 'Time',
       accessor: 'time',
+      width:30
     },
     {
       Header: 'Mod',
       accessor: 'mod',
+      width:20
     },
     {
       Header: 'Ct',
       accessor: 'ct',
+      width:20
     },
     {
       Header: 'Terminal Data',
@@ -130,7 +133,7 @@ const App = () => {
   ];
 
   useEffect(() => {
-    window.electron.ipcRenderer.on('ipc-example', args => {
+    window.electron.ipcRenderer.on('ipc-cmd', args => {
       const reply_msg = makeReplyMsg(args as string);
       allMessages.push(reply_msg);
       setMessages(allMessages => [...allMessages, reply_msg]);
@@ -172,6 +175,7 @@ const App = () => {
         </div>
       </div>
     </Styles>
+
   );
 };
 export default App;
