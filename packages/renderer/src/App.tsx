@@ -1,10 +1,10 @@
-import {useState, useEffect, useRef} from 'react';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import React, {useState, useRef, useEffect} from 'react';
 import styled from 'styled-components';
-import {Table} from './components/Table';
-
-import './index.css';
+import { MultiCheckBoxColumnFilter, Table } from './components/Table';
+import './style/index.css';
+import './style/styles.css';
 const Styles = styled.div`
-
   ${
     '' /* These styles are suggested for the table fill all available space in its containing element */
   }
@@ -46,14 +46,14 @@ const Styles = styled.div`
           border-bottom: 0;
         }
       }
-       border-bottom: 1px solid black;
+      border-bottom: 1px solid black;
     }
 
     .th,
     .td {
       margin: 0;
       padding: 0.5rem;
-       border-right: 1px solid black;
+      border-right: 1px solid black;
       :last-child {
         border-right: 0;
       }
@@ -61,11 +61,10 @@ const Styles = styled.div`
   }
 `;
 
-//sample code for testing
 
-const App = () => {
+function Terminal() {
   type cmdMessage = {
-    time: string;
+    time: number;
     mod: string;
     ct: number;
     terminal: string;
@@ -78,7 +77,7 @@ const App = () => {
 
   const makeCmd = (cmd: string) => {
     return {
-      time: '',
+      time: Math.floor(Date.now() / 1000),
       mod: 'CMD',
       ct: 4,
       terminal: cmd,
@@ -86,7 +85,7 @@ const App = () => {
   };
   const makeReplyMsg = (msg: string) => {
     return {
-      time: '',
+      time: Math.floor(Date.now() / 1000),
       mod: 'REPLY',
       ct: 4,
       terminal: msg,
@@ -98,9 +97,9 @@ const App = () => {
     if (message.length === 0) {
       return;
     }
-    if(message == 'clear'){
-        setMessages([]);
-    }else{
+    if (message == 'clear') {
+      setMessages([]);
+    } else {
       const msg = makeCmd(message);
       setMessage('');
       allMessages.push(msg);
@@ -110,27 +109,35 @@ const App = () => {
     }
   };
 
-  const columns = [
-    {
-      Header: 'Time',
-      accessor: 'time',
-      width:30
-    },
-    {
-      Header: 'Mod',
-      accessor: 'mod',
-      width:20
-    },
-    {
-      Header: 'Ct',
-      accessor: 'ct',
-      width:20
-    },
-    {
-      Header: 'Terminal Data',
-      accessor: 'terminal',
-    },
-  ];
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: 'Time',
+        accessor: 'time',
+        disableFilters: true,
+        width: 40,
+      },
+      {
+        Header: 'Mod',
+        accessor: 'mod',
+        Filter: MultiCheckBoxColumnFilter,
+        filter: 'multiSelect',
+        width: 40,
+      },
+      {
+        Header: 'Ct',
+        accessor: 'ct',
+        disableFilters: true,
+        width: 30,
+      },
+      {
+        Header: 'Terminal Data',
+        accessor: 'terminal',
+        disableFilters: true,
+      },
+    ],
+    [],
+  );
 
   useEffect(() => {
     window.electron.ipcRenderer.on('ipc-cmd', args => {
@@ -144,38 +151,31 @@ const App = () => {
     setMessage('');
   }, [messages]);
 
-  // useEffect(() => {
-  //   setMessages([]);
-  // }, [message === 'clear']);
-
   return (
     <Styles>
       <div className="main">
-        <div className="chat-window">
-          <Table
-            columns={columns}
-            data={messages}
-          />
-
-          <form
-            className="chat-form"
-            onSubmit={submit}
-          >
-            <div className="chat-input-container">
-              <input
-                type="text"
-                className="chat-input"
-                placeholder="Message..."
-                value={message}
-                onChange={e => setMessage(e.target.value)}
-                ref={inputRef}
-              />
-            </div>
-          </form>
-        </div>
+        <Table
+          columns={columns}
+          data={messages}
+        />
+        <form
+          className="chat-form"
+          onSubmit={submit}
+        >
+          <div className="chat-input-container">
+            <input
+              type="text"
+              className="chat-input"
+              placeholder="CMD...."
+              value={message}
+              onChange={e => setMessage(e.target.value)}
+              ref={inputRef}
+            />
+          </div>
+        </form>
       </div>
     </Styles>
-
   );
-};
-export default App;
+}
+
+export default Terminal;
