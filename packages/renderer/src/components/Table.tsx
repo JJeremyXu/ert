@@ -1,5 +1,4 @@
 import {useTable, useFlexLayout, useResizeColumns} from 'react-table';
-import styled from 'styled-components';
 import {useMemo, useRef, useEffect} from 'react';
 
 type cmdMessage = {
@@ -45,7 +44,7 @@ export const Table = ({columns, data}:inputTable) => {
       defaultColumn,
     },
     useFlexLayout,
-    useResizeColumns
+    useResizeColumns,
   );
 
   // Render the UI for your table

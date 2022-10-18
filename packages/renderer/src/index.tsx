@@ -1,10 +1,11 @@
-import App from './App';
+
+import Terminal from './Terminal';
 import {createRoot} from 'react-dom/client';
 
 const container = document.getElementById('app');
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
-root.render(<App />);
+root.render(<Terminal />);
 
 // window.electron.ipcRenderer.sendMessage('ipc-example', ['ping']);
 // window.electron.ipcRenderer.on('ipc-example',(arg)=>{
