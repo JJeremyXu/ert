@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld('electron', {
   },
 });
 
-export type Channels = 'ipc-cmd';
+export type Channels = 'ipc-cmd'|'ipc-msg';
 
 export {sha256sum} from './nodeCrypto';
 export {versions} from './versions';

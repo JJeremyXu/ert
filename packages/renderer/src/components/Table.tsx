@@ -1,6 +1,12 @@
-import React, {useRef, useEffect} from 'react';
-import type {Row, FilterProps} from 'react-table';
-import {useTable, useFlexLayout, useFilters, useSortBy, useGlobalFilter} from 'react-table';
+import React,
+    { useRef, useEffect }     from 'react';
+import type
+  { Row, FilterProps }        from 'react-table';
+import
+{ useTable, useFlexLayout,
+  useFilters, useSortBy,
+  useGlobalFilter }           from 'react-table';
+
 type terminalData = {
   time: string;
   mod: string;
@@ -13,7 +19,6 @@ function DefaultColumnFilter({
   column: {filterValue, preFilteredRows, setFilter},
 }: FilterProps<terminalData>) {
   const count = preFilteredRows.length;
-
   return (
     <input
       value={filterValue || ''}
@@ -26,7 +31,7 @@ function DefaultColumnFilter({
 }
 
 export function MultiCheckBoxColumnFilter({
-  column: {setFilter, preFilteredRows, id},
+  column: {filterValue, setFilter, preFilteredRows, id},
 }: FilterProps<terminalData>) {
   const options = React.useMemo(() => {
     const counts = {} as {[key: string]: number};
@@ -54,6 +59,10 @@ export function MultiCheckBoxColumnFilter({
       setChecked(prevChecked => [...prevChecked, t]);
     }
   };
+  useEffect(()=>{
+    console.log('set filter');
+    setFilter([...checked]);
+  },[filterValue==undefined]);
 
   const handleCheckAll = () => {
     setChecked(Object.keys(options));
@@ -65,7 +74,6 @@ export function MultiCheckBoxColumnFilter({
   };
 
   let expanded = false;
-
   function showCheckboxes() {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const checkboxes = document.getElementById('checkboxes')!;
@@ -127,7 +135,7 @@ export function MultiCheckBoxColumnFilter({
 }
 
 type cmdMessage = {
-  time: number;
+  time: string;
   mod: string;
   ct: number;
   terminal: string;
