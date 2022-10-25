@@ -32,6 +32,8 @@ const Styles = styled.div`
     height: 95vh;
     border-spacing: 0;
     /* border: 1px solid black; */
+    overflow-y: hidden;
+    overflow-x: hidden;
     .thead {
       ${'' /* These styles are required for a scrollable body to align with the header properly */}
       overflow-y: hidden;
@@ -58,9 +60,27 @@ const Styles = styled.div`
     .td {
       margin: 0;
       padding: 0.5rem;
+      // position: relative;
       border-right: 1px solid black;
       :last-child {
         border-right: 0;
+      }
+      .resizer {
+        display: inline-block;
+        background: black;
+        width: 10px;
+        height: 100%;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transform: translateX(50%);
+        z-index: 1;
+        ${'' /* prevents from scrolling while dragging on touch devices */}
+        touch-action:none;
+
+        &.isResizing {
+          background: red;
+        }
       }
     }
   }
@@ -124,7 +144,7 @@ function Terminal() {
         Header: 'Time',
         accessor: 'time',
         disableFilters: true,
-        width: 40,
+        width:30,
       },
       {
         Header: 'Mod',
@@ -137,13 +157,13 @@ function Terminal() {
         Header: 'Ct',
         accessor: 'ct',
         disableFilters: true,
-        width: 'auto',
+        width: 10,
       },
       {
         Header: 'Terminal Data',
         accessor: 'terminal',
         disableFilters: true,
-        width: 200,
+        width: 250,
       },
     ],
     [],

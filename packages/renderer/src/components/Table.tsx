@@ -5,7 +5,8 @@ import type
 import
 { useTable, useFlexLayout,
   useFilters, useSortBy,
-  useGlobalFilter }           from 'react-table';
+  useGlobalFilter,
+  useResizeColumns }          from 'react-table';
 
 type terminalData = {
   time: string;
@@ -170,9 +171,9 @@ export const Table: React.FC<inputTable> = ({columns, data}) => {
 
   const defaultColumn = React.useMemo(
     () => ({
-      minWidth: 30, // minWidth is only used as a limit for resizing
+      minWidth: 10, // minWidth is only used as a limit for resizing
       width: 150, // width is used for both the flex-basis and flex-grow
-      maxWidth: 200, // maxWidth is only used as a limit for resizing
+      maxWidth: 300, // maxWidth is only used as a limit for resizing
       Filter: DefaultColumnFilter,
     }),
     [],
@@ -202,6 +203,7 @@ export const Table: React.FC<inputTable> = ({columns, data}) => {
     useFilters, // useFilters!
     useGlobalFilter,
     useSortBy,
+    useResizeColumns,
   );
 
   // Render the UI for your table
@@ -227,6 +229,12 @@ export const Table: React.FC<inputTable> = ({columns, data}) => {
                 {/* Render the columns filter UI */}
                 {/* <div>{column.canFilter ? column.render("Filter") : null}</div> */}
                 <div>{column.canFilter ? column.render('Filter') : column.render('Header')}</div>
+                <div
+                      {...column.getResizerProps()}
+                      className={`resizer ${
+                        column.isResizing ? "isResizing" : ""
+                      }`}
+                    />
               </div>
             ))}
           </div>
