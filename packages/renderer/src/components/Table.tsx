@@ -171,7 +171,7 @@ export const Table: React.FC<inputTable> = ({columns, data}) => {
 
   const defaultColumn = React.useMemo(
     () => ({
-      minWidth: 10, // minWidth is only used as a limit for resizing
+      minWidth: 20, // minWidth is only used as a limit for resizing
       width: 150, // width is used for both the flex-basis and flex-grow
       maxWidth: 300, // maxWidth is only used as a limit for resizing
       Filter: DefaultColumnFilter,

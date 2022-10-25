@@ -144,14 +144,14 @@ function Terminal() {
         Header: 'Time',
         accessor: 'time',
         disableFilters: true,
-        width:30,
+        width:40,
       },
       {
         Header: 'Mod',
         accessor: 'mod',
         Filter: MultiCheckBoxColumnFilter,
         filter: 'multiSelect',
-        width: 10,
+        width: 30,
       },
       {
         Header: 'Ct',
