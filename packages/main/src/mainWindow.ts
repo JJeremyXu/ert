@@ -1,7 +1,7 @@
-import { app, BrowserWindow } from 'electron';
-import { join }               from 'path';
-import { URL }                from 'url';
-import { device }             from './orosound';
+import {app, BrowserWindow} from 'electron';
+import {join} from 'path';
+import {URL} from 'url';
+import {device} from './orosound';
 export async function createWindow() {
   const browserWindow = new BrowserWindow({
     show: false, // Use the 'ready-to-show' event to show the instantiated BrowserWindow.
@@ -29,25 +29,20 @@ export async function createWindow() {
     }
   });
 
-
-
-
   let dom_ready = 0;
-  device.hid.on('hid-receive', (data) => {
+  device.hid.on('hid-receive', data => {
     if (!dom_ready) {
       setTimeout(() => {
-        browserWindow.webContents.send('ipc-msg', '<-- (' + data.length + ')' + data.toString('hex'));
+        browserWindow.webContents.send(
+          'ipc-msg',
+          '<-- (' + data.length + ')' + data.toString('hex'),
+        );
         dom_ready = 1;
       }, 1000);
     } else {
       browserWindow.webContents.send('ipc-msg', '<-- (' + data.length + ')' + data.toString('hex'));
     }
-
   });
-
-
-
-
 
   /**
    * URL for main window.

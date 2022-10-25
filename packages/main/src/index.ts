@@ -1,10 +1,9 @@
-import { app, ipcMain }       from 'electron';
-import type { OroDevice }     from '@orosound/node-sdk';
-import { Events }             from '@orosound/node-sdk';
+import {app, ipcMain} from 'electron';
+import type {OroDevice} from '@orosound/node-sdk';
+import {Events} from '@orosound/node-sdk';
 import './security-restrictions';
-import {
-  restoreOrCreateWindow }     from '/@/mainWindow';
-import { device }             from './orosound';
+import {restoreOrCreateWindow} from '/@/mainWindow';
+import {device} from './orosound';
 
 let api_version: number;
 device.on(Events.DEVICE_READY, () => {
@@ -24,8 +23,6 @@ function attachDevice(device: OroDevice) {
       console.log('please connect your device');
     });
 }
-
-
 
 ipcMain.on('ipc-cmd', async (event, arg) => {
   if (arg == 'api-version') {
