@@ -1,6 +1,13 @@
-import React, {useRef, useEffect} from 'react';
-import type {Row, FilterProps} from 'react-table';
-import {useTable, useFlexLayout, useFilters, useSortBy, useGlobalFilter} from 'react-table';
+import React,
+    { useRef, useEffect }     from 'react';
+import type
+  { Row, FilterProps }        from 'react-table';
+import
+{ useTable, useFlexLayout,
+  useFilters, useSortBy,
+  useGlobalFilter,
+  useResizeColumns }          from 'react-table';
+
 type terminalData = {
   time: string;
   mod: string;
@@ -13,7 +20,6 @@ function DefaultColumnFilter({
   column: {filterValue, preFilteredRows, setFilter},
 }: FilterProps<terminalData>) {
   const count = preFilteredRows.length;
-
   return (
     <input
       value={filterValue || ''}
@@ -26,7 +32,7 @@ function DefaultColumnFilter({
 }
 
 export function MultiCheckBoxColumnFilter({
-  column: {setFilter, preFilteredRows, id},
+  column: {filterValue, setFilter, preFilteredRows, id},
 }: FilterProps<terminalData>) {
   const options = React.useMemo(() => {
     const counts = {} as {[key: string]: number};
@@ -54,6 +60,10 @@ export function MultiCheckBoxColumnFilter({
       setChecked(prevChecked => [...prevChecked, t]);
     }
   };
+  useEffect(()=>{
+    console.log('set filter');
+    setFilter([...checked]);
+  },[filterValue==undefined]);
 
   const handleCheckAll = () => {
     setChecked(Object.keys(options));
@@ -65,7 +75,6 @@ export function MultiCheckBoxColumnFilter({
   };
 
   let expanded = false;
-
   function showCheckboxes() {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const checkboxes = document.getElementById('checkboxes')!;
@@ -127,7 +136,7 @@ export function MultiCheckBoxColumnFilter({
 }
 
 type cmdMessage = {
-  time: number;
+  time: string;
   mod: string;
   ct: number;
   terminal: string;
@@ -162,9 +171,9 @@ export const Table: React.FC<inputTable> = ({columns, data}) => {
 
   const defaultColumn = React.useMemo(
     () => ({
-      minWidth: 30, // minWidth is only used as a limit for resizing
+      minWidth: 10, // minWidth is only used as a limit for resizing
       width: 150, // width is used for both the flex-basis and flex-grow
-      maxWidth: 200, // maxWidth is only used as a limit for resizing
+      maxWidth: 300, // maxWidth is only used as a limit for resizing
       Filter: DefaultColumnFilter,
     }),
     [],
@@ -194,6 +203,7 @@ export const Table: React.FC<inputTable> = ({columns, data}) => {
     useFilters, // useFilters!
     useGlobalFilter,
     useSortBy,
+    useResizeColumns,
   );
 
   // Render the UI for your table
@@ -219,6 +229,12 @@ export const Table: React.FC<inputTable> = ({columns, data}) => {
                 {/* Render the columns filter UI */}
                 {/* <div>{column.canFilter ? column.render("Filter") : null}</div> */}
                 <div>{column.canFilter ? column.render('Filter') : column.render('Header')}</div>
+                <div
+                      {...column.getResizerProps()}
+                      className={`resizer ${
+                        column.isResizing ? "isResizing" : ""
+                      }`}
+                    />
               </div>
             ))}
           </div>

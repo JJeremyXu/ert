@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, {useState, useRef, useEffect} from 'react';
-import styled from 'styled-components';
-import { MultiCheckBoxColumnFilter, Table } from './components/Table';
+import React,
+    { useState,
+      useRef,
+      useEffect,
+      useMemo }               from 'react';
+import styled                 from 'styled-components';
+import { MultiCheckBoxColumnFilter
+  , Table }                   from './components/Table';
 import './style/index.css';
 import './style/styles.css';
 const Styles = styled.div`
@@ -27,6 +32,8 @@ const Styles = styled.div`
     height: 95vh;
     border-spacing: 0;
     /* border: 1px solid black; */
+    overflow-y: hidden;
+    overflow-x: hidden;
     .thead {
       ${'' /* These styles are required for a scrollable body to align with the header properly */}
       overflow-y: hidden;
@@ -53,9 +60,27 @@ const Styles = styled.div`
     .td {
       margin: 0;
       padding: 0.5rem;
+      // position: relative;
       border-right: 1px solid black;
       :last-child {
         border-right: 0;
+      }
+      .resizer {
+        display: inline-block;
+        background: black;
+        width: 10px;
+        height: 100%;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transform: translateX(50%);
+        z-index: 1;
+        ${'' /* prevents from scrolling while dragging on touch devices */}
+        touch-action:none;
+
+        &.isResizing {
+          background: red;
+        }
       }
     }
   }
@@ -64,7 +89,7 @@ const Styles = styled.div`
 
 function Terminal() {
   type cmdMessage = {
-    time: number;
+    time: string;
     mod: string;
     ct: number;
     terminal: string;
@@ -72,20 +97,24 @@ function Terminal() {
 
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<cmdMessage[]>([]);
-  const allMessages = [];
+  const allMessages = new Array<cmdMessage>;
   const inputRef = useRef() as React.MutableRefObject<HTMLInputElement>;
 
   const makeCmd = (cmd: string) => {
+    const time = new Date();
+    console.log(time.toLocaleString());
     return {
-      time: Math.floor(Date.now() / 1000),
+      time: time.toLocaleString(),
       mod: 'CMD',
       ct: 4,
       terminal: cmd,
     };
   };
   const makeReplyMsg = (msg: string) => {
+    const time = new Date();
+    console.log(time.toLocaleString());
     return {
-      time: Math.floor(Date.now() / 1000),
+      time: time.toLocaleString(),
       mod: 'REPLY',
       ct: 4,
       terminal: msg,
@@ -109,38 +138,39 @@ function Terminal() {
     }
   };
 
-  const columns = React.useMemo(
+  const columns = useMemo(
     () => [
       {
         Header: 'Time',
         accessor: 'time',
         disableFilters: true,
-        width: 40,
+        width:30,
       },
       {
         Header: 'Mod',
         accessor: 'mod',
         Filter: MultiCheckBoxColumnFilter,
         filter: 'multiSelect',
-        width: 40,
+        width: 10,
       },
       {
         Header: 'Ct',
         accessor: 'ct',
         disableFilters: true,
-        width: 30,
+        width: 10,
       },
       {
         Header: 'Terminal Data',
         accessor: 'terminal',
         disableFilters: true,
+        width: 250,
       },
     ],
     [],
   );
 
   useEffect(() => {
-    window.electron.ipcRenderer.on('ipc-cmd', args => {
+    window.electron.ipcRenderer.on('ipc-msg', args => {
       const reply_msg = makeReplyMsg(args as string);
       allMessages.push(reply_msg);
       setMessages(allMessages => [...allMessages, reply_msg]);
