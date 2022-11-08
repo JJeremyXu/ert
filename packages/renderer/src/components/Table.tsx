@@ -61,7 +61,6 @@ export function MultiCheckBoxColumnFilter({
     }
   };
   useEffect(()=>{
-    console.log('set filter');
     setFilter([...checked]);
   },[filterValue==undefined]);
 
