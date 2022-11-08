@@ -1,5 +1,5 @@
-import { OroDevice }          from '@orosound/node-sdk';
 
+import {OroDevice}            from '@orosound/sdk-tilde';
 
-export const device = new OroDevice();
+export const oro_device       = new OroDevice();
 

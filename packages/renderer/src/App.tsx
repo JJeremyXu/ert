@@ -9,6 +9,8 @@ import { MultiCheckBoxColumnFilter
   , Table }                   from './components/Table';
 import './style/index.css';
 import './style/styles.css';
+import type {Trace}           from './function/message';
+import Message                from './function/message';
 const Styles = styled.div`
   ${
     '' /* These styles are suggested for the table fill all available space in its containing element */
@@ -110,16 +112,6 @@ function Terminal() {
       terminal: cmd,
     };
   };
-  const makeReplyMsg = (msg: string) => {
-    const time = new Date();
-    console.log(time.toLocaleString());
-    return {
-      time: time.toLocaleString(),
-      mod: 'REPLY',
-      ct: 4,
-      terminal: msg,
-    };
-  };
 
   const submit = (e: {preventDefault: () => void}) => {
     e.preventDefault();
@@ -169,12 +161,26 @@ function Terminal() {
     [],
   );
 
-  useEffect(() => {
+  function ipcReceive(){
     window.electron.ipcRenderer.on('ipc-msg', args => {
-      const reply_msg = makeReplyMsg(args as string);
-      allMessages.push(reply_msg);
-      setMessages(allMessages => [...allMessages, reply_msg]);
+      console.log(typeof(args));
+      let msg = String(args);
+      msg = msg.replace(/\\n/g, '');
+      console.log('msg',msg);
+      const m :Trace = JSON.parse(msg);
+      const message = new Message(m);
+
+
+      // const reply_msg = makeReplyMsg(args as string);
+      allMessages.push(message.getCmdMessage());
+      setMessages(allMessages => [...allMessages, message.getCmdMessage()]);
     });
+
+  }
+
+
+  useEffect(() => {
+    ipcReceive();
   }, []);
 
   useEffect(() => {

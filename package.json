@@ -54,6 +54,7 @@
     "@orosound/hid": "^0.2.3",
     "@orosound/node-sdk": "^0.3.1",
     "@orosound/orocom": "^2.4.2",
+    "@orosound/sdk-tilde": "^0.2.1",
     "@typescript-eslint/parser": "^5.40.0",
     "@vitejs/plugin-react": "^2.1.0",
     "electron-updater": "5.2.1",

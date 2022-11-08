@@ -1,40 +1,35 @@
 import { app, ipcMain }       from 'electron';
-import type { OroDevice }     from '@orosound/node-sdk';
-import { Events }             from '@orosound/node-sdk';
 import './security-restrictions';
 import {
   restoreOrCreateWindow }     from '/@/mainWindow';
-import { device }             from './orosound';
+import { oro_device }         from './orosound';
 
-let api_version: number;
-device.on(Events.DEVICE_READY, () => {
-  api_version = device.api_version;
-  console.log('api-version', device.api_version);
+oro_device.onEvent((evt)=>{
+  console.log('event ',JSON.stringify(evt));
+
 });
 
-attachDevice(device);
+async function connect(){
 
-function attachDevice(device: OroDevice) {
-  device
-    .attach()
-    .then(() => {
-      device.init();
-    })
-    .catch(() => {
-      console.log('please connect your device');
-    });
+  try {
+    await oro_device.attach();
+
+  } catch (error) {
+    console.log(error);
+  }
+
+  oro_device.rawTrace('setLanguage 1');
+
+ oro_device.getBattery().then(res => console.log(JSON.stringify(res)));
+//  oro_device.setLanguage(1).then(res => console.log(JSON.stringify(res)));
 }
+
+connect();
 
 
 
 ipcMain.on('ipc-cmd', async (event, arg) => {
-  if (arg == 'api-version') {
-    const msgTemplate = (msg: number) => `api-version: ${msg}`;
-    // console.log(msgTemplate(arg));
-    event.reply('ipc-msg', msgTemplate(api_version));
-  } else {
-    return;
-  }
+  oro_device.rawTrace(arg[0]);
 });
 
 /**
