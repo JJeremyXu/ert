@@ -8,9 +8,9 @@ export default {
    * @param {string[]} filenames
    * @return {string[]}
    */
-  '{package-lock.json,packages/**/{*.ts,*.vue,tsconfig.json}}': ({filenames}) => {
+  '{yarn.lock,packages/**/{*.ts,*.vue,tsconfig.json}}': ({filenames}) => {
     // if dependencies was changed run type checking for all packages
-    if (filenames.some(f => f.endsWith('package-lock.json'))) {
+    if (filenames.some(f => f.endsWith('yarn.lock'))) {
       return ['npm run typecheck --if-present'];
     }
 

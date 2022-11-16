@@ -181,7 +181,9 @@ export const Table: React.FC<inputTable> = ({columns, data}) => {
   const displayEndRef = useRef(null) as unknown as React.MutableRefObject<HTMLInputElement>;
 
   const scrollToBottom = () => {
-    displayEndRef.current.scrollIntoView({behavior: 'smooth'});
+    displayEndRef.current.scrollIntoView(
+      // {behavior: 'smooth'}
+      );
   };
 
   useEffect(scrollToBottom, [data]);

@@ -6,11 +6,9 @@ import React,
       useMemo }               from 'react';
 import styled                 from 'styled-components';
 import { MultiCheckBoxColumnFilter
-  , Table }                   from './components/Table-client';
+  , Table }                   from './components/Table-server';
 import './style/index.css';
 import './style/styles.css';
-import type {Trace}           from './function/message';
-import Message                from './function/message';
 const Styles = styled.div`
   ${
     '' /* These styles are suggested for the table fill all available space in its containing element */
@@ -100,37 +98,25 @@ function Terminal() {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<cmdMessage[]>([]);
   const [cmdList, setCmdList] = useState<string[]>([]);
-  const allMessages = new Array<cmdMessage>;
   const inputRef = useRef() as React.MutableRefObject<HTMLInputElement>;
 
-  const makeCmd = (cmd: string) => {
-    const time = new Date();
-    console.log(time.toLocaleString());
-    return {
-      time: time.toLocaleString(),
-      mod: 'CMD',
-      ct: 4,
-      terminal: cmd,
-    };
-  };
+
 
   const submit = (e: {preventDefault: () => void}) => {
     // setSubmitCmd(1);
     e.preventDefault();
     setCmdList([...cmdList, message]);
-    console.log(cmdList);
     if (message.length === 0) {
       return;
     }
     if (message == 'clear') {
       setMessages([]);
-    } else {
-      const msg = makeCmd(message);
+    }
+    else {
+      // const msg = makeCmd(message);
       setMessage('');
-      allMessages.push(msg);
-      setMessages(allMessages => [...allMessages, msg]);
-      console.log(allMessages);
-      console.log(cmdList);
+      // allMessages.push(msg);
+      // setMessages(allMessages => [...allMessages, msg]);
       // setMessages([...messages, msg]);
       window.electron.ipcRenderer.sendMessage('ipc-cmd', [message]);
     }
@@ -168,17 +154,9 @@ function Terminal() {
 
   function ipcReceive(){
     window.electron.ipcRenderer.on('ipc-msg', args => {
-      console.log(typeof(args));
-      let msg = String(args);
-      msg = msg.replace(/\\n/g, '');
-      console.log('msg',msg);
-      const m :Trace = JSON.parse(msg);
-      const message = new Message(m);
-
-
-      // const reply_msg = makeReplyMsg(args as string);
-      allMessages.push(message.getCmdMessage());
-      setMessages(allMessages => [...allMessages, message.getCmdMessage()]);
+      // console.log(typeof(args));
+      // console.log(args);
+      setMessages(args as cmdMessage[]);
     });
 
   }

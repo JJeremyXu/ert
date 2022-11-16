@@ -1,7 +1,39 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow,
+  ipcMain }                   from 'electron';
 import { join }               from 'path';
 import { URL }                from 'url';
 import { oro_device }         from './orosound';
+import Message                from './message';
+import type {Trace}           from './message';
+
+type cmdMessage = {
+  time: string;
+  mod: string;
+  ct: number;
+  terminal: string;
+};
+
+
+const allMessages : cmdMessage[] = [];
+let renderMessages : cmdMessage[] = [];
+let filter : string[] = [];
+let isAll = true;
+
+
+function send(browserWindow: BrowserWindow){
+  if(isAll){
+    browserWindow.webContents.send('ipc-msg',allMessages);
+  }else{
+    browserWindow.webContents.send('ipc-msg',renderMessages);
+  }
+}
+
+ipcMain.on('ipc-isAll',async (event, arg) =>{
+  isAll = arg[0];
+});
+
+
+
 
 export async function createWindow() {
   const browserWindow = new BrowserWindow({
@@ -29,9 +61,54 @@ export async function createWindow() {
       browserWindow?.webContents.openDevTools();
     }
   });
+  const makeCmd = (cmd: string) => {
+    const time = new Date();
+    return {
+      time: time.toLocaleString(),
+      mod: 'CMD',
+      ct: 4,
+      terminal: cmd,
+    };
+  };
 
+  ipcMain.on('ipc-filter',async (event, arg) => {
+    filter = arg;
+    renderMessages = allMessages.filter((msg)=>{
+      return (arg as Array<string>).includes(msg.mod);
+    });
+    send(browserWindow);
+  });
+
+  // command line
+  ipcMain.on('ipc-cmd', async (event, arg) => {
+    oro_device.rawTrace(arg[0]);
+    const cmd = makeCmd(arg[0]);
+    allMessages.push(cmd);
+    mode = allMessages.map((msg)=>msg.mod);
+    mode = Array.from(new Set(mode));
+    if(mode.length>0){
+      browserWindow.webContents.send('ipc-mode',mode);
+    }
+    send(browserWindow);
+  });
+
+  // trace
+  let mode : string[] = [];
   oro_device.onEvent((evt)=>{
-    browserWindow.webContents.send('ipc-msg',JSON.stringify(evt));
+    if(evt.eid == 0){
+      evt.value = (evt.value as string).replace(/\n/g, '');
+      const message = new Message(evt as Trace);
+      allMessages.push(message.getCmdMessage());
+      renderMessages = allMessages.filter((msg)=>{
+        return filter.includes(msg.mod);
+      });
+      mode = allMessages.map((msg)=>msg.mod);
+      mode = Array.from(new Set(mode));
+    }
+    browserWindow.webContents.send('ipc-msg',renderMessages);
+    if(mode.length>0){
+      browserWindow.webContents.send('ipc-mode',mode);
+    }
   });
 
 

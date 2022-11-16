@@ -1,36 +1,32 @@
-import { app, ipcMain }       from 'electron';
+import { app }                from 'electron';
 import './security-restrictions';
 import {
   restoreOrCreateWindow }     from '/@/mainWindow';
 import { oro_device }         from './orosound';
 
+
 oro_device.onEvent((evt)=>{
-  console.log('event ',JSON.stringify(evt));
+  console.log(JSON.stringify(evt));
 
 });
-
 async function connect(){
-
   try {
     await oro_device.attach();
 
   } catch (error) {
     console.log(error);
   }
-
   oro_device.rawTrace('setLanguage 1');
-
- oro_device.getBattery().then(res => console.log(JSON.stringify(res)));
+//  oro_device.getBattery().then(res => console.log(JSON.stringify(res)));
 //  oro_device.setLanguage(1).then(res => console.log(JSON.stringify(res)));
 }
 
 connect();
 
+// ipcMain.on('ipc-cmd', async (event, arg) => {
+//   oro_device.rawTrace(arg[0]);
+// });
 
-
-ipcMain.on('ipc-cmd', async (event, arg) => {
-  oro_device.rawTrace(arg[0]);
-});
 
 /**
  * Prevent electron from running multiple instances.
